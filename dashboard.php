@@ -7,7 +7,8 @@ require_role('admin', 'faculty');
 $s = q("SELECT COUNT(*) AS papers,
                SUM(status = 'pending') AS pending,
                SUM(views) AS views, SUM(downloads) AS downloads, SUM(likes) AS likes,
-               SUM(access_level <> 'withheld' AND status = 'approved') AS discoverable,
+               SUM(status = 'approved') AS discoverable,
+               SUM(access_level = 'withheld' AND status = 'approved') AS withheld,
                COUNT(DISTINCT campus) AS campuses
         FROM papers")->fetch();
 $users = q('SELECT COUNT(*) AS n FROM users')->fetch()['n'];
@@ -61,7 +62,9 @@ include __DIR__ . '/partials/header.php';
     <div class="stat">
       <div class="label">Publicly discoverable records</div>
       <div class="value"><?= (int)$s['discoverable'] ?></div>
-      <div class="small muted">baseline under v1: 0 &mdash; an account was required to view anything</div>
+      <div class="small muted">
+        every approved description, <?= (int)$s['withheld'] ?> of them with the document withheld.
+        Baseline under v1: 0 &mdash; an account was required to view anything</div>
     </div>
     <div class="stat">
       <div class="label">Campuses represented</div>

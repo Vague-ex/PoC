@@ -1,6 +1,6 @@
 <?php
 /* Objective 3 - search filtering by year, adviser, college and subject area,
-   in place of the three broad categories of ASSET v1. Campus comes from Objective 4.
+   where ASSET v1 had a search box and no filters at all. Campus comes from Objective 4.
    Public: approved holdings are listed to anyone; only the full document is gated. */
 require_once __DIR__ . '/config.php';
 
@@ -72,10 +72,6 @@ include __DIR__ . '/partials/header.php';
       <?php if ($active): ?>
         <a class="btn btn-outline" style="width:100%;text-align:center;margin-top:7px" href="search.php">Clear all</a>
       <?php endif; ?>
-      <p class="small muted" style="margin-bottom:0">
-        ASSET v1 offered three broad categories only. v2 narrows by year, adviser,
-        college, subject area and campus.
-      </p>
     </div>
   </form>
 

@@ -106,7 +106,6 @@ tbody tr:hover { background: #fafbfc; }
   display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 11.5px;
   font-weight: 600; background: #eef1f4; color: #55607a; vertical-align: middle;
 }
-.tag-public { background: #e4f4ec; color: #1d7a4c; }
 .tag-restricted { background: #fdf2dd; color: #96661a; }
 .tag-withheld { background: #fbe6e5; color: #a32a24; }
 .tag-pending { background: #fdf2dd; color: #96661a; }

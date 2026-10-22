@@ -102,13 +102,13 @@ include __DIR__ . '/partials/header.php';
           </div>
         </div>
         <div>
-          <div class="field"><label>Campus of origin <span class="tag">v2</span></label>
+          <div class="field"><label>Campus of origin</label>
             <select name="campus"><?php foreach (CAMPUSES as $c): ?>
               <option <?= $defCampus === $c ? 'selected' : '' ?>><?= e($c) ?></option><?php endforeach; ?></select></div>
-          <div class="field"><label>College of origin <span class="tag">v2</span></label>
+          <div class="field"><label>College of origin</label>
             <select name="college"><?php foreach (COLLEGES as $c): ?>
               <option <?= $defCollege === $c ? 'selected' : '' ?>><?= e($c) ?></option><?php endforeach; ?></select></div>
-          <div class="field"><label>Subject area <span class="tag">v2</span></label>
+          <div class="field"><label>Subject area</label>
             <select name="subject_area"><?php foreach (SUBJECT_AREAS as $c): ?>
               <option <?= $in('subject_area') === $c ? 'selected' : '' ?>><?= e($c) ?></option><?php endforeach; ?></select></div>
           <div class="field"><label>Category (retained from v1)</label>
@@ -118,16 +118,15 @@ include __DIR__ . '/partials/header.php';
                   <?= $in('category', 'Technological') === $c ? 'checked' : '' ?>> <?= e($c) ?>
               </label>
             <?php endforeach; ?></div>
-          <div class="field"><label>Access level <span class="tag">v2</span></label>
+          <div class="field"><label>Access level</label>
             <select name="access_level">
-              <option value="public" <?= $in('access_level') === 'public' ? 'selected' : '' ?>>Public &ndash; description indexed, full text to signed-in users</option>
-              <option value="restricted" <?= $in('access_level', 'restricted') === 'restricted' ? 'selected' : '' ?>>Restricted &ndash; description indexed, full text to signed-in users</option>
-              <option value="withheld" <?= $in('access_level') === 'withheld' ? 'selected' : '' ?>>Withheld &ndash; description only, full text released to no one</option>
+              <option value="restricted" <?= $in('access_level', 'restricted') === 'restricted' ? 'selected' : '' ?>>Restricted &ndash; full document released to signed-in institutional users</option>
+              <option value="withheld" <?= $in('access_level') === 'withheld' ? 'selected' : '' ?>>Withheld &ndash; full document released to no one; requests go to the adviser</option>
             </select>
-            <p class="small muted" style="margin:5px 0 0">The description is public in every case. Only the full document is gated.</p></div>
+            <p class="small muted" style="margin:5px 0 0">
+              The description is public either way.</p></div>
           <div class="field"><label>Full document (PDF)</label>
-            <input type="file" name="document" accept="application/pdf" style="width:100%">
-            <p class="small muted" style="margin:5px 0 0">Optional in this proof of concept; a placeholder PDF stands in.</p></div>
+            <input type="file" name="document" accept="application/pdf" style="width:100%"></div>
         </div>
       </div>
 

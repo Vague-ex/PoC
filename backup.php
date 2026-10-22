@@ -101,11 +101,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             else { log_action('restored the archive from ' . $b['filename']); }
         }
 
-    } elseif ($do === 'corrupt' && $b) {
-        /* Demonstration aid: damages the dump on disk so verification can be seen failing. */
-        file_put_contents(BACKUP_DIR . '/' . $b['filename'], "-- tampered\n", FILE_APPEND);
-        flash('The dump file was altered on disk. Verify it again to see the checksum catch it.', 'warn');
-
     } elseif ($do === 'delete' && $b) {
         @unlink(BACKUP_DIR . '/' . $b['filename']);
         q('DELETE FROM backups WHERE id = ?', [$b['id']]);
@@ -169,7 +164,6 @@ include __DIR__ . '/partials/header.php';
         <td>
           <?php foreach ([['verify', 'Verify', 'btn-outline', ''],
                           ['restore', 'Restore', '', 'This replaces the live archive with the contents of this dump. Continue?'],
-                          ['corrupt', 'Tamper', 'btn-outline', 'Damage this dump file so verification fails?'],
                           ['delete', 'Delete', 'btn-outline', 'Delete this backup?']] as [$do, $label, $cls, $confirm]): ?>
             <form method="post" style="display:inline"
                   <?= $confirm ? 'onsubmit="return confirm(' . "'" . $confirm . "'" . ')"' : '' ?>>
@@ -187,8 +181,8 @@ include __DIR__ . '/partials/header.php';
 </div>
 
 <p class="small muted">
-  <strong>Demonstration sequence:</strong> run a backup, verify it (passes), press Tamper,
-  verify again (fails on the checksum), then attempt Restore &mdash; it is refused.
-  Run a fresh backup and restore from that one instead.
+  <strong>Demonstration sequence:</strong> run a backup, verify it, then delete a holding
+  from the archive and restore from that dump &mdash; the holding returns.
+  A dump whose SHA-256 no longer matches fails verification and restoration from it is refused.
 </p>
 <?php include __DIR__ . '/partials/footer.php'; ?>

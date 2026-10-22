@@ -10,7 +10,7 @@ const DB_PASS = '';
 const CAMPUSES = ['Aparri','Andrews','Carig','Gonzaga','Lal-lo','Lasam','Piat','Sanchez Mira'];
 const COLLEGES = ['College of Information and Computing Sciences','College of Teacher Education','College of Business Entrepreneurship and Accountancy','College of Fisheries and Aquatic Sciences','College of Arts and Sciences','College of Hospitality Management','College of Industrial Technology'];
 const SUBJECT_AREAS = ['Information Systems','Software Engineering','Education','Business and Management','Fisheries and Aquaculture','Natural Sciences','Hospitality and Tourism','Industrial Technology','Public Health'];
-/* Legacy ASSET v1 categories - the "three broad categories" v2 supplements. */
+/* Legacy ASSET v1 categories - recorded at deposit in v1 but never searchable; v2 makes them a filter. */
 const CATEGORIES = ['Social','Experimental','Technological'];
 
 function db(bool $withDb = true): PDO {
@@ -71,8 +71,13 @@ function find_duplicates(string $title, int $exceptId = 0): array {
     return $hits;
 }
 
-/* Objective 5: tiered access. Descriptions are public; full documents are gated. */
+/* Objective 5: tiered access. The description of every approved holding is public.
+   Only the full document is tiered, and only two tiers are needed:
+     restricted - released to any authenticated institutional user;
+     withheld   - released to no one through the system, on the author's or
+                  adviser's instruction. Requests go to the adviser off-system.
+   The administrator can always release, since the archive is in their custody. */
 function can_download(array $paper): bool {
     if ($paper['access_level'] === 'withheld') return is_role('admin');
-    return (bool)user();   // any authenticated institutional user
+    return (bool)user();
 }

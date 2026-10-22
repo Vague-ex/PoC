@@ -26,18 +26,21 @@ ok('the highest-similarity match comes first', (function () use ($known) {
 })());
 
 /* --- tiered access --- */
-$public     = ['access_level' => 'public'];
 $restricted = ['access_level' => 'restricted'];
 $withheld   = ['access_level' => 'withheld'];
 unset($_SESSION['user']);
-ok('a guest cannot download a public holding',      !can_download($public));
 ok('a guest cannot download a restricted holding',  !can_download($restricted));
+ok('a guest cannot download a withheld holding',    !can_download($withheld));
 $_SESSION['user'] = ['id' => 3, 'name' => 'test', 'role' => 'student'];
-ok('a signed-in user can download a public holding',     can_download($public));
 ok('a signed-in user can download a restricted holding', can_download($restricted));
 ok('a student cannot download a withheld holding',      !can_download($withheld));
+$_SESSION['user'] = ['id' => 2, 'name' => 'test', 'role' => 'faculty'];
+ok('a research teacher cannot download a withheld holding', !can_download($withheld));
 $_SESSION['user']['role'] = 'admin';
-ok('an admin can download a withheld holding',           can_download($withheld));
+ok('an admin may release a withheld holding',            can_download($withheld));
+/* Only two levels exist; a value outside them must not fall open. */
+ok('the two access levels are the only ones stored',
+   q("SELECT COUNT(*) AS n FROM papers WHERE access_level NOT IN ('restricted','withheld')")->fetch()['n'] == 0);
 
 /* --- backup, verification and restoration --- */
 $_SESSION['user'] = ['id' => 1, 'name' => 'selfcheck', 'role' => 'admin'];

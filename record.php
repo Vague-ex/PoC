@@ -25,8 +25,9 @@ $dc = [
   'DC.format'      => 'application/pdf',
   'DC.identifier'  => $url,
   'DC.language'    => 'en',
-  'DC.rights'      => $p['access_level'] === 'public' ? 'Open access description; full text on request'
-                                                      : 'Description public; full text restricted',
+  'DC.rights'      => $p['access_level'] === 'withheld'
+      ? 'Description openly available; full text withheld, requests to the adviser'
+      : 'Description openly available; full text to authenticated institutional users',
 ];
 $head = "<link rel=\"canonical\" href=\"" . e($url) . "\">\n";
 foreach ($dc as $k => $v) {
@@ -40,7 +41,9 @@ $head .= "<script type=\"application/ld+json\">" . json_encode([
     'abstract' => $p['abstract'], 'inLanguage' => 'en', 'url' => $url,
     'publisher' => ['@type' => 'CollegeOrUniversity',
                     'name' => 'Cagayan State University - ' . $p['campus'] . ' Campus'],
-    'isAccessibleForFree' => $p['access_level'] === 'public',
+    /* The description is free; the document is not. Claiming otherwise would send a
+       harvester's users to a sign-in wall, which indexing services penalise. */
+    'isAccessibleForFree' => false,
 ], JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . "</script>\n";
 
 $title = $p['title'];
@@ -68,10 +71,22 @@ include __DIR__ . '/partials/header.php';
   <h2>Full Document</h2>
   <div class="body">
     <?php if ($p['access_level'] === 'withheld'): ?>
-      <div class="flash warn" style="margin:0">
+      <div class="flash warn" style="margin:0 0 12px">
         The full document is withheld at the author&rsquo;s or adviser&rsquo;s instruction.
         The description above remains publicly available.
       </div>
+      <p class="small" style="margin:0">
+        <strong>To request a copy</strong>, write to the adviser,
+        <strong><?= e($p['adviser']) ?></strong>, through the
+        <?= e($p['college']) ?>, Cagayan State University &ndash; <?= e($p['campus']) ?> Campus.
+        A withheld document is released by the author or adviser directly, not through
+        this archive.
+      </p>
+      <?php if (is_role('admin')): ?>
+        <p class="small muted" style="margin:12px 0 0">
+          As custodian of the archive you may release it. The release is written to the system log.</p>
+        <a class="btn" href="download.php?id=<?= (int)$p['id'] ?>">Release full document (PDF)</a>
+      <?php endif; ?>
     <?php elseif (!user()): ?>
       <div class="flash warn" style="margin:0 0 12px">
         The description above is public and indexable. The full document is released

@@ -3,9 +3,11 @@
    holdings counter and a link into the filtered search. */
 require_once __DIR__ . '/config.php';
 
+/* Every approved description is public and listed in the sitemap, withheld ones
+   included - the access level governs the document, not the description. */
 $stats = q("SELECT
     COUNT(*) AS total,
-    SUM(access_level <> 'withheld') AS discoverable,
+    SUM(access_level <> 'withheld') AS releasable,
     COUNT(DISTINCT campus) AS campuses
   FROM papers WHERE status = 'approved'")->fetch();
 
@@ -23,8 +25,8 @@ include __DIR__ . '/partials/header.php';
     <button class="btn">Search</button>
   </form>
   <p class="muted small" style="margin-top:14px">
-    <?= (int)$stats['total'] ?> approved holdings &middot;
-    <?= (int)$stats['discoverable'] ?> publicly described &middot;
+    <?= (int)$stats['total'] ?> approved holdings, all publicly described &middot;
+    <?= (int)$stats['releasable'] ?> with the full document available on sign-in &middot;
     <?= (int)$stats['campuses'] ?> campuses &middot;
     <a href="search.php">browse with filters</a> &middot;
     <a href="sitemap.php">sitemap</a>
